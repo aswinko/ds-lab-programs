@@ -21,7 +21,7 @@ void pop(){
 	}
 }
 
-void display(){
+void display(){ 
 	if(top < 0){
 		printf("Stack is underflow.");
 	}else {
