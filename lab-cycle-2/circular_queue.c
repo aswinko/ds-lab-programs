@@ -1,8 +1,8 @@
 #include<stdio.h>
 int que[10], MAX_SIZE, front=-1, rear=-1;
 
-void enqueue(){
-	if(rear == MAX_SIZE-1){
+	void enqueue(){
+		if((rear == MAX_SIZE-1 && front == 0) || front == rear + 1){
 		printf("Queue is full!\n");
 	}else{
 		int data;
