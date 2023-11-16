@@ -2,7 +2,7 @@
 int queue[100], front = -1, rear = -1, n, choice = 0;
 
 void enqueue(){
-	if(rear == n-1){
+	if((rear == n-1 && front == 0) || front == rear + 1	){
 		printf("Queue is Full!\n");
 	}else{
 	

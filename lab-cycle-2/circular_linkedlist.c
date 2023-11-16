@@ -11,6 +11,18 @@ struct Node* head = NULL;
 void insertAtHead(int value) {
     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
     newNode->data = value;
+    
+    if (head == NULL) {
+        newNode->next = newNode;
+        head = newNode;
+        return;
+    }
+
+    struct Node* temp = head;
+    while (temp->next != head)
+        temp = temp->next;
+
+    temp->next = newNode;
     newNode->next = head;
     head = newNode;
 }
@@ -18,38 +30,33 @@ void insertAtHead(int value) {
 void insertAtTail(int value) {
     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
     newNode->data = value;
-    newNode->next = NULL;
 
     if (head == NULL) {
+        newNode->next = newNode;
         head = newNode;
         return;
     }
 
     struct Node* temp = head;
-    while (temp->next != NULL)
+    while (temp->next != head)
         temp = temp->next;
 
     temp->next = newNode;
+    newNode->next = head;
 }
 
 void insertAtPosition(int value, int position) {
+    if (position == 1) {
+        insertAtHead(value);
+        return;
+    }
+
     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
     newNode->data = value;
 
-    if (position == 1) {
-        newNode->next = head;
-        head = newNode;
-        return;
-    }
-
     struct Node* temp = head;
-    for (int i = 1; i < position - 1 && temp != NULL; i++)
+    for (int i = 1; i < position - 1 && temp->next != head; i++)
         temp = temp->next;
-
-    if (temp == NULL) {
-        printf("Invalid position.\n");
-        return;
-    }
 
     newNode->next = temp->next;
     temp->next = newNode;
@@ -61,9 +68,20 @@ void deleteAtHead() {
         return;
     }
 
+    if (head->next == head) {
+        free(head);
+        head = NULL;
+        return;
+    }
+
     struct Node* temp = head;
+    while (temp->next != head)
+        temp = temp->next;
+
+    temp->next = head->next;
+    struct Node* toDelete = head;
     head = head->next;
-    free(temp);
+    free(toDelete);
 }
 
 void deleteAtTail() {
@@ -72,18 +90,19 @@ void deleteAtTail() {
         return;
     }
 
-    if (head->next == NULL) {
+    if (head->next == head) {
         free(head);
         head = NULL;
         return;
     }
 
     struct Node* temp = head;
-    while (temp->next->next != NULL)
+    while (temp->next->next != head)
         temp = temp->next;
 
-    free(temp->next);
-    temp->next = NULL;
+    struct Node* toDelete = temp->next;
+    temp->next = head;
+    free(toDelete);
 }
 
 void deleteAtPosition(int position) {
@@ -93,17 +112,15 @@ void deleteAtPosition(int position) {
     }
 
     if (position == 1) {
-        struct Node* temp = head;
-        head = head->next;
-        free(temp);
+        deleteAtHead();
         return;
     }
 
     struct Node* temp = head;
-    for (int i = 1; i < position - 1 && temp != NULL; i++)
+    for (int i = 1; i < position - 1 && temp->next != head; i++)
         temp = temp->next;
 
-    if (temp == NULL || temp->next == NULL) {
+    if (temp->next == head) {
         printf("Invalid position.\n");
         return;
     }
@@ -116,23 +133,28 @@ void deleteAtPosition(int position) {
 void search(int value) {
     struct Node* temp = head;
     int position = 1;
-    while (temp != NULL) {
+    do {
         if (temp->data == value) {
             printf("%d found at position %d.\n", value, position);
             return;
         }
         temp = temp->next;
         position++;
-    }
+    } while (temp != head);
     printf("%d not found in the list.\n", value);
 }
 
 void display() {
+    if (head == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+
     struct Node* temp = head;
-    while (temp != NULL) {
+    do {
         printf("%d ", temp->data);
         temp = temp->next;
-    }
+    } while (temp != head);
     printf("\n");
 }
 
@@ -140,7 +162,7 @@ int main() {
     int choice, value, position;
 
     do {
-        printf("\nSingly Linked List Operations:\n");
+        printf("\nCircular Linked List Operations:\n");
         printf("1. Insert at Head\n");
         printf("2. Insert at Tail\n");
         printf("3. Insert at Position\n");
@@ -208,5 +230,6 @@ int main() {
                 break;
         }
     } while (choice != 9);
+
     return 0;
 }

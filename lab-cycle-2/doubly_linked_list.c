@@ -4,6 +4,7 @@
 struct Node {
     int data;
     struct Node* next;
+    struct Node* prev;
 };
 
 struct Node* head = NULL;
@@ -12,6 +13,11 @@ void insertAtHead(int value) {
     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
     newNode->data = value;
     newNode->next = head;
+    newNode->prev = NULL;
+
+    if (head != NULL)
+        head->prev = newNode;
+
     head = newNode;
 }
 
@@ -21,6 +27,7 @@ void insertAtTail(int value) {
     newNode->next = NULL;
 
     if (head == NULL) {
+        newNode->prev = NULL;
         head = newNode;
         return;
     }
@@ -30,6 +37,7 @@ void insertAtTail(int value) {
         temp = temp->next;
 
     temp->next = newNode;
+    newNode->prev = temp;
 }
 
 void insertAtPosition(int value, int position) {
@@ -38,6 +46,9 @@ void insertAtPosition(int value, int position) {
 
     if (position == 1) {
         newNode->next = head;
+        newNode->prev = NULL;
+        if (head != NULL)
+            head->prev = newNode;
         head = newNode;
         return;
     }
@@ -52,6 +63,9 @@ void insertAtPosition(int value, int position) {
     }
 
     newNode->next = temp->next;
+    newNode->prev = temp;
+    if (temp->next != NULL)
+        temp->next->prev = newNode;
     temp->next = newNode;
 }
 
@@ -63,6 +77,10 @@ void deleteAtHead() {
 
     struct Node* temp = head;
     head = head->next;
+
+    if (head != NULL)
+        head->prev = NULL;
+
     free(temp);
 }
 
@@ -79,11 +97,11 @@ void deleteAtTail() {
     }
 
     struct Node* temp = head;
-    while (temp->next->next != NULL)
+    while (temp->next != NULL)
         temp = temp->next;
 
-    free(temp->next);
-    temp->next = NULL;
+    temp->prev->next = NULL;
+    free(temp);
 }
 
 void deleteAtPosition(int position) {
@@ -95,6 +113,10 @@ void deleteAtPosition(int position) {
     if (position == 1) {
         struct Node* temp = head;
         head = head->next;
+
+        if (head != NULL)
+            head->prev = NULL;
+
         free(temp);
         return;
     }
@@ -110,6 +132,8 @@ void deleteAtPosition(int position) {
 
     struct Node* toDelete = temp->next;
     temp->next = temp->next->next;
+    if (temp->next != NULL)
+        temp->next->prev = temp;
     free(toDelete);
 }
 
@@ -140,7 +164,7 @@ int main() {
     int choice, value, position;
 
     do {
-        printf("\nSingly Linked List Operations:\n");
+        printf("\nDoubly Linked List Operations:\n");
         printf("1. Insert at Head\n");
         printf("2. Insert at Tail\n");
         printf("3. Insert at Position\n");
@@ -208,5 +232,6 @@ int main() {
                 break;
         }
     } while (choice != 9);
+
     return 0;
-}
+}	
